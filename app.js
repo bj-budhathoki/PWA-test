@@ -1,19 +1,23 @@
 const API_KEY='5b499da98abd4def912c7b015cd96050';
 const main=document.querySelector('main');
-const selector=document.querySelector('.selector');
-console.log(selector);
-window.addEventListener('load',(e)=>{
+const sourceSelector=document.querySelector('.selector');
+const defaultSource='bbc-news';
+window.addEventListener('load', async (e)=>{
     updateNews();
-    updateSources();
+    await updateSources();
+    sourceSelector.value=defaultSource;
+    sourceSelector.addEventListener('change',(e)=>{
+        updateNews(e.target.value);
+    })
 });
 async function updateSources(){
     const res=await fetch(`https://newsapi.org/v2/sources?apiKey=${API_KEY}`);
     const json= await res.json();
     console.log(json);
-    selector.innerHTML=json.sources.map(src=>`<option value="${src.id}">${src.name}</option>`).join('\n');
+    sourceSelector.innerHTML=json.sources.map(src=>`<option value="${src.id}">${src.name}</option>`).join('\n');
 }
-async function updateNews() {
-    const res=await fetch(`https://newsapi.org/v2/top-headlines?sources=bbc-news&apiKey=${API_KEY}`);
+async function updateNews(source=defaultSource) {
+    const res=await fetch(`https://newsapi.org/v2/top-headlines?sources=${source}&apiKey=${API_KEY}`);
     const json= await res.json();
     console.log(json);
     main.innerHTML=json.articles.map(createArticle).join('\n');
