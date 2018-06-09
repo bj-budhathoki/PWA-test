@@ -9,6 +9,14 @@ window.addEventListener('load', async (e)=>{
     sourceSelector.addEventListener('change',(e)=>{
         updateNews(e.target.value);
     })
+    if('serviceWorker' in navigator){
+        try {
+            navigator.serviceWorker.register('sw.js');
+            console.log('service worker register');
+        } catch (error) {
+            console.log(error);
+        }
+    }
 });
 async function updateSources(){
     const res=await fetch(`https://newsapi.org/v2/sources?apiKey=${API_KEY}`);
